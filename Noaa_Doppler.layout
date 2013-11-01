@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="src/noaa_doppler_pi.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1710" topLine="33" />
+		</Cursor>
+		<Folding>
+			<Collapse line="6" />
+		</Folding>
+	</File>
+	<File name="src/noaa_doppler_pi.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="70" topLine="12" />
+		</Cursor>
+		<Folding>
+			<Collapse line="1" />
+			<Collapse line="10" />
+			<Collapse line="15" />
+			<Collapse line="27" />
+			<Collapse line="33" />
+			<Collapse line="35" />
+			<Collapse line="39" />
+			<Collapse line="44" />
+			<Collapse line="48" />
+			<Collapse line="95" />
+			<Collapse line="100" />
+			<Collapse line="105" />
+			<Collapse line="110" />
+			<Collapse line="118" />
+			<Collapse line="122" />
+			<Collapse line="130" />
+			<Collapse line="136" />
+			<Collapse line="138" />
+			<Collapse line="142" />
+			<Collapse line="151" />
+			<Collapse line="156" />
+			<Collapse line="159" />
+			<Collapse line="165" />
+			<Collapse line="172" />
+			<Collapse line="178" />
+			<Collapse line="181" />
+			<Collapse line="196" />
+			<Collapse line="200" />
+			<Collapse line="205" />
+			<Collapse line="209" />
+			<Collapse line="215" />
+			<Collapse line="219" />
+			<Collapse line="223" />
+			<Collapse line="237" />
+			<Collapse line="241" />
+			<Collapse line="245" />
+			<Collapse line="257" />
+			<Collapse line="264" />
+			<Collapse line="268" />
+			<Collapse line="273" />
+			<Collapse line="277" />
+			<Collapse line="279" />
+			<Collapse line="283" />
+			<Collapse line="287" />
+			<Collapse line="295" />
+			<Collapse line="299" />
+			<Collapse line="301" />
+			<Collapse line="311" />
+			<Collapse line="323" />
+			<Collapse line="327" />
+			<Collapse line="339" />
+			<Collapse line="344" />
+			<Collapse line="349" />
+			<Collapse line="354" />
+			<Collapse line="359" />
+			<Collapse line="364" />
+			<Collapse line="369" />
+			<Collapse line="375" />
+			<Collapse line="387" />
+			<Collapse line="396" />
+			<Collapse line="406" />
+			<Collapse line="427" />
+			<Collapse line="432" />
+			<Collapse line="436" />
+			<Collapse line="441" />
+			<Collapse line="446" />
+		</Folding>
+	</File>
+</CodeBlocks_layout_file>
