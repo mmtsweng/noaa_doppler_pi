@@ -55,6 +55,8 @@ FIND_PACKAGE(Gettext REQUIRED)
 SET(SRC_NOAADOPPLER
     src/noaa_doppler_pi.cpp
     src/noaa_doppler_pi.h
+    src/icons.cpp
+    src/icons.h
  	)
 
 INCLUDE_DIRECTORIES(opencpn)
