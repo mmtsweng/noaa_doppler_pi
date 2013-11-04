@@ -14,6 +14,9 @@
 #define     MY_API_VERSION_MAJOR    1
 #define     MY_API_VERSION_MINOR    8
 
+#define     REMEMBRANCER_TOOL_POSITION    -1          // Request default positioning of toolbar tool
+
+
 #include "../include/opencpn/ocpn_plugin.h"
 
 //----------------------------------------------------------------------------------------------------------
@@ -33,22 +36,23 @@ public:
     int GetPlugInVersionMajor();
     int GetPlugInVersionMinor();
 
+    wxBitmap *GetPlugInBitmap();
     wxString GetCommonName();
     wxString GetShortDescription();
     wxString GetLongDescription();
 
     //    The optional method overrides
     void OnContextMenuItemCallback(int id);
-    void UpdateAuiStatus(void);
-    void OnTimer(wxTimerEvent& event);
+    //void UpdateAuiStatus(void);
+    //void OnTimer(wxTimerEvent& event);
 
     //    The override PlugIn Methods
     bool RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp);
     void SetCursorLatLon(double lat, double lon);
     bool RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp);
     int GetToolbarToolCount(void);
-    void ShowPreferencesDialog( wxWindow* parent );
-    void OnToolbarToolCallback(int id);
+    //void ShowPreferencesDialog( wxWindow* parent );
+    //void OnToolbarToolCallback(int id);
     void SetPositionFixEx(PlugIn_Position_Fix_Ex &pfix);
 
 

@@ -5,6 +5,7 @@
 
 #include <wx/aui/aui.h>
 #include "noaa_doppler_pi.h"
+#include "icons.h"
 
 // the class factories, used to create and destroy instances of the PlugIn
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
@@ -28,7 +29,7 @@ wxAuiManager    *m_AUImgr;
 noaa_doppler_pi::noaa_doppler_pi(void *ppimgr)
     : opencpn_plugin_18(ppimgr)
 {
-
+    initialize_images();
 }
 
 
@@ -41,7 +42,7 @@ int noaa_doppler_pi::Init(void)
     m_parent_window = GetOCPNCanvasWindow();
 
     // Get a reference to the OCPN Configuration object
-    m_pconfig = GetOCPNConfigObject();
+    //m_pconfig = GetOCPNConfigObject();
 
     // Create the Context Menu Items
 
@@ -57,6 +58,10 @@ int noaa_doppler_pi::Init(void)
     wxMenuItem *pmih = new wxMenuItem(&dummy_menu, -1, _("Hide PlugIn DemoWindow"));
     m_hide_id = AddCanvasContextMenuItem(pmih, this );
     SetCanvasContextMenuItemViz(m_hide_id, false);
+
+    // This PlugIn needs a toolbar icon
+    m_toolbar_item_id  = InsertPlugInTool(_T(""), _img_noaadoppler_active, _img_noaadoppler_inactive, wxITEM_CHECK,
+        _("Remembrancer"), _T(""), NULL, REMEMBRANCER_TOOL_POSITION, 0, this);
 
     return (
                INSTALLS_CONTEXTMENU_ITEMS     |
@@ -88,6 +93,14 @@ bool noaa_doppler_pi::DeInit(void)
 //////////////////////////////////////
 
 
+/*
+    Method to return the bitmap for the toolbar
+*/
+wxBitmap *noaa_doppler_pi::GetPlugInBitmap()
+{
+      return _img_noaadoppler_active;
+}
+
 int noaa_doppler_pi::GetAPIVersionMajor()
 {
     return MY_API_VERSION_MAJOR;
@@ -110,17 +123,17 @@ int noaa_doppler_pi::GetPlugInVersionMinor()
 
 wxString noaa_doppler_pi::GetCommonName()
 {
-    return _("NOAA Doppler");
+    return _("NOAA Doppler Overlay");
 }
 
 wxString noaa_doppler_pi::GetShortDescription()
 {
-    return _("NOAA Doppler PlugIn for OpenCPN");
+    return _("NOAA Doppler Overlay PlugIn for OpenCPN");
 }
 
 wxString noaa_doppler_pi::GetLongDescription()
 {
-    return _("NOAA Doppler PlugIn for OpenCPN\n\rPlugIn that processes OCPN messages and displays an alert if a route is active (an autopilot is engaged).");
+    return _("NOAA Doppler PlugIn for OpenCPN\n\rDisplay NOAA NEXRAD Raday images as an overlay on OpenCPN");
 
 }
 
@@ -128,7 +141,6 @@ void noaa_doppler_pi::OnContextMenuItemCallback(int id)
 {
 
 }
-
 
 bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
