@@ -38,6 +38,8 @@ noaa_doppler_pi::noaa_doppler_pi(void *ppimgr)
 */
 int noaa_doppler_pi::Init(void)
 {
+    wxLogMessage(_T("NOAADOPPLER: Initializing"));
+
     // Get a pointer to the opencpn display canvas, to use as a parent for windows created
     m_parent_window = GetOCPNCanvasWindow();
 
@@ -59,9 +61,12 @@ int noaa_doppler_pi::Init(void)
     m_hide_id = AddCanvasContextMenuItem(pmih, this );
     SetCanvasContextMenuItemViz(m_hide_id, false);
 
+    //Set Default Values
+    m_controlPanelWindow = NULL;
+
     // This PlugIn needs a toolbar icon
-    m_toolbar_item_id  = InsertPlugInTool(_T(""), _img_noaadoppler_active, _img_noaadoppler_inactive, wxITEM_CHECK,
-        _("Remembrancer"), _T(""), NULL, REMEMBRANCER_TOOL_POSITION, 0, this);
+    m_toolbar_item_id  = InsertPlugInTool(_T(""), _img_noaadoppler_inactive, _img_noaadoppler_inactive, wxITEM_CHECK,
+        _("NOAA Doppler"), _T(""), NULL, NOAADOPPLER_TOOL_POSITION, 0, this);
 
     return (
                INSTALLS_CONTEXTMENU_ITEMS     |
@@ -81,10 +86,64 @@ int noaa_doppler_pi::Init(void)
 */
 bool noaa_doppler_pi::DeInit(void)
 {
-    wxLogMessage(_T("NOAA Doppler: DeInit"));
+    wxLogMessage(_T("NOAADOPPLER: DeInit"));
+
+    m_AUImgr->DetachPane(m_controlPanelWindow);
+    if(m_controlPanelWindow)
+    {
+        m_controlPanelWindow->Close();
+    }
+
+    if (_img_noaadoppler_inactive)
+    {
+        delete _img_noaadoppler_inactive;
+    }
+    if (_img_noaadoppler_active)
+    {
+        delete _img_noaadoppler_active;
+    }
 
     return true;
 }
+
+
+/*
+    Show Preferences
+*/
+void noaa_doppler_pi::OnToolbarToolCallback(int id)
+{
+    SetToolbarItemState(m_toolbar_item_id, true);
+    ShowPropertiesWindow();
+}
+
+
+/*
+    Method to show the Properies window
+*/
+void noaa_doppler_pi::ShowPropertiesWindow()
+{
+    if (!m_controlPanelWindow)
+    {
+        wxLogMessage(_T("NOAADOPPLER: Create Window"));
+
+        m_controlPanelWindow = new noaa_control_panel(*this, m_parent_window);
+    }
+    wxLogMessage(_T("NOAADOPPLER: Show Window"));
+    if(m_controlPanelWindow->ShowModal() == wxID_OK)
+    {
+        SetToolbarItemState(m_toolbar_item_id, false);
+    }
+}
+
+
+/*
+    Refresh icons
+*/
+void noaa_doppler_pi::ResetToolbarIcon()
+{
+    RequestRefresh(m_parent_window);
+}
+
 
 
 //////////////////////////////////////
@@ -98,7 +157,7 @@ bool noaa_doppler_pi::DeInit(void)
 */
 wxBitmap *noaa_doppler_pi::GetPlugInBitmap()
 {
-      return _img_noaadoppler_active;
+      return _img_noaadoppler_inactive;
 }
 
 int noaa_doppler_pi::GetAPIVersionMajor()
