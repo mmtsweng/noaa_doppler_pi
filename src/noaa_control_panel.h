@@ -12,6 +12,7 @@ class noaa_control_panel : public PreferencesDialog
         virtual ~noaa_control_panel();
     protected:
         noaa_doppler_pi &m_noaa_doppler_pi;
+        void CheckBoxClicked( wxCommandEvent &event );
     private:
 };
 

@@ -26,19 +26,22 @@
 ///////////////////////////////////////////////////////////////////////////////
 /// Class PreferencesDialog
 ///////////////////////////////////////////////////////////////////////////////
-class PreferencesDialog : public wxDialog 
+class PreferencesDialog : public wxDialog
 {
 	private:
-	
+
 	protected:
 		wxCheckBox* mChkShowDialog;
 		wxButton* btn_Ok;
-	
+
+		// Virtual event handlers, overide them in your derived class
+		virtual void CheckBoxClicked( wxCommandEvent& event ) { event.Skip(); }
+
 	public:
-		
-		PreferencesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 152,324 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+
+		PreferencesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 152,324 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~PreferencesDialog();
-	
+
 };
 
 #endif //__DIALOGDEFINITIONS_H__

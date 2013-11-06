@@ -33,8 +33,14 @@ PreferencesDialog::PreferencesDialog( wxWindow* parent, wxWindowID id, const wxS
 	this->Layout();
 	
 	this->Centre( wxBOTH );
+	
+	// Connect Events
+	mChkShowDialog->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PreferencesDialog::CheckBoxClicked ), NULL, this );
 }
 
 PreferencesDialog::~PreferencesDialog()
 {
+	// Disconnect Events
+	mChkShowDialog->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PreferencesDialog::CheckBoxClicked ), NULL, this );
+	
 }

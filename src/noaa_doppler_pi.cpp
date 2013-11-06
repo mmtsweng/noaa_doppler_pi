@@ -112,7 +112,6 @@ bool noaa_doppler_pi::DeInit(void)
 */
 void noaa_doppler_pi::OnToolbarToolCallback(int id)
 {
-    SetToolbarItemState(m_toolbar_item_id, true);
     ShowPropertiesWindow();
 }
 
@@ -122,17 +121,19 @@ void noaa_doppler_pi::OnToolbarToolCallback(int id)
 */
 void noaa_doppler_pi::ShowPropertiesWindow()
 {
+    SetToolbarItemState(m_toolbar_item_id, false);
+    SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_active, _img_noaadoppler_active);
     if (!m_controlPanelWindow)
     {
-        wxLogMessage(_T("NOAADOPPLER: Create Window"));
-
         m_controlPanelWindow = new noaa_control_panel(*this, m_parent_window);
     }
-    wxLogMessage(_T("NOAADOPPLER: Show Window"));
+
     if(m_controlPanelWindow->ShowModal() == wxID_OK)
     {
-        SetToolbarItemState(m_toolbar_item_id, false);
     }
+
+    SetToolbarItemState(m_toolbar_item_id, false);
+    SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_inactive, _img_noaadoppler_inactive);
 }
 
 
