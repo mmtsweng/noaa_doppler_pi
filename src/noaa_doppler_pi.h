@@ -19,6 +19,8 @@
 
 #include "../include/opencpn/ocpn_plugin.h"
 #include "noaa_control_panel.h"
+#include "gfw.h"
+#include "doppler_image.h"
 
 //----------------------------------------------------------------------------------------------------------
 //    The PlugIn Class Definition
@@ -43,6 +45,7 @@ public:
     wxString GetLongDescription();
 
     //    The Plugin Specific Methods
+    void SetDopplerVisibility(bool visible);
 
     //    The override PlugIn Methods
     void OnToolbarToolCallback(int id);
@@ -64,10 +67,11 @@ private:
     wxWindow            *m_parent_window;
     wxAuiManager        *m_AUImgr;
     wxFileConfig        *m_pconfig;
+    doppler_image       *m_overlayImage;
     int                 m_show_id;
     int                 m_hide_id;
     int                 m_toolbar_item_id;
-
+    bool                m_showDoppler;
 };
 #endif
 

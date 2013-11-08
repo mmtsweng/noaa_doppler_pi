@@ -6,6 +6,7 @@
 #include <wx/aui/aui.h>
 #include "noaa_doppler_pi.h"
 #include "icons.h"
+#include "doppler_image.h"
 
 // the class factories, used to create and destroy instances of the PlugIn
 extern "C" DECL_EXP opencpn_plugin* create_pi(void *ppimgr)
@@ -21,6 +22,7 @@ extern "C" DECL_EXP void destroy_pi(opencpn_plugin* p)
 //UI Elements
 wxWindow        *m_parent_window;
 wxAuiManager    *m_AUImgr;
+doppler_image   *m_overlayImage;
 
 /*
     Constructor
@@ -30,6 +32,8 @@ noaa_doppler_pi::noaa_doppler_pi(void *ppimgr)
     : opencpn_plugin_18(ppimgr)
 {
     initialize_images();
+    m_overlayImage = new doppler_image();
+    m_overlayImage->LoadImage(_T("/home/matt/opencpn/radar/ATX_N0R_0.gif"));
 }
 
 
@@ -63,6 +67,7 @@ int noaa_doppler_pi::Init(void)
 
     //Set Default Values
     m_controlPanelWindow = NULL;
+    m_showDoppler = false;
 
     // This PlugIn needs a toolbar icon
     m_toolbar_item_id  = InsertPlugInTool(_T(""), _img_noaadoppler_inactive, _img_noaadoppler_inactive, wxITEM_CHECK,
@@ -75,7 +80,8 @@ int noaa_doppler_pi::Init(void)
                WANTS_TOOLBAR_CALLBACK         |
                WANTS_OPENGL_OVERLAY_CALLBACK  |
                INSTALLS_TOOLBAR_TOOL          |
-               INSTALLS_CONTEXTMENU_ITEMS
+               INSTALLS_CONTEXTMENU_ITEMS     |
+               WANTS_OVERLAY_CALLBACK
            );
 }
 
@@ -102,6 +108,10 @@ bool noaa_doppler_pi::DeInit(void)
     {
         delete _img_noaadoppler_active;
     }
+    if (m_overlayImage)
+    {
+        delete m_overlayImage;
+    }
 
     return true;
 }
@@ -113,6 +123,14 @@ bool noaa_doppler_pi::DeInit(void)
 void noaa_doppler_pi::OnToolbarToolCallback(int id)
 {
     ShowPropertiesWindow();
+    gfw_world_file gfw;
+
+    gfw.scaleX = 0.0107884909889915;
+    gfw.rotationX=0;
+    gfw.rotationY=0;
+    gfw.scaleY = -0.0107884909889915;
+    gfw.coordX = -125.725156347101;
+    gfw.coordY = 51.1564404713024;
 }
 
 
@@ -123,6 +141,7 @@ void noaa_doppler_pi::ShowPropertiesWindow()
 {
     SetToolbarItemState(m_toolbar_item_id, false);
     SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_active, _img_noaadoppler_active);
+    m_showDoppler = true;
     if (!m_controlPanelWindow)
     {
         m_controlPanelWindow = new noaa_control_panel(*this, m_parent_window);
@@ -131,7 +150,6 @@ void noaa_doppler_pi::ShowPropertiesWindow()
     if(m_controlPanelWindow->ShowModal() == wxID_OK)
     {
     }
-
     SetToolbarItemState(m_toolbar_item_id, false);
     SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_inactive, _img_noaadoppler_inactive);
 }
@@ -146,6 +164,29 @@ void noaa_doppler_pi::ResetToolbarIcon()
 }
 
 
+/*
+    Show/Hide the Doppler Overlay
+*/
+void noaa_doppler_pi::SetDopplerVisibility(bool visibility)
+{
+    m_showDoppler = visibility;
+}
+
+/*
+    Non-OpenGL Rendering
+*/
+bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
+{
+    if (m_overlayImage && m_showDoppler)
+    {
+
+        wxPoint *pt = new wxPoint();
+        pt->x = 100;
+        pt->y = 200;
+        dc.DrawBitmap(*m_overlayImage->GetStretchedImage(), *pt, true);
+    }
+    return false;
+}
 
 //////////////////////////////////////
 //          Items Below are         //
@@ -202,17 +243,19 @@ void noaa_doppler_pi::OnContextMenuItemCallback(int id)
 
 }
 
-bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
-{
-    return false;
-}
-
 void noaa_doppler_pi::SetCursorLatLon(double lat, double lon)
 {
 }
 
+
 bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {
+    if (m_overlayImage)
+    {
+        wxLogMessage(_T("NOAADOPPLER: GL Overlay"));
+        //wxBitmap m_ptemp_img = new wxBitmap(m_overlayImage->GetWidth(), m_overlayImage->GetHeight());
+        //dc.DrawBitmap(*m_overlayImage, 0, 0, false);
+    }
     return false;
 }
 

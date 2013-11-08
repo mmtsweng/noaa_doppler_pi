@@ -15,4 +15,5 @@ noaa_control_panel::~noaa_control_panel()
 void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 {
     wxLogMessage(_T("NOAADOPPLER: Checkbox Clicked"));
+    //this->m_noaa_doppler_pi.SetDopplerVisibility(event.IsChecked());
 }

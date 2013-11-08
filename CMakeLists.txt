@@ -61,6 +61,9 @@ SET(SRC_NOAADOPPLER
     src/dialogDefinitions.h
     src/noaa_control_panel.cpp
     src/noaa_control_panel.h
+    src/gfw.h
+    src/doppler_image.cpp
+    src/doppler_image.h
  	)
 
 INCLUDE_DIRECTORIES(opencpn)
