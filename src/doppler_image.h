@@ -22,7 +22,9 @@ class doppler_image
         wxBitmap            *m_cachedImage;
         PlugIn_ViewPort     *m_lastViewPort;
         void                CalculateWorldFile();
-        gfw_world_file      *gfw;
+        wxBitmap            GenerateClippedImage(PlugIn_ViewPort *vp);
+        wxRect              CalculateClippingArea(PlugIn_ViewPort *vp);
+        gfw_world_file      m_gfw;
 
 };
 

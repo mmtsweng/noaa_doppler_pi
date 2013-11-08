@@ -1,17 +1,17 @@
 #ifndef GFW_H_INCLUDED
 #define GFW_H_INCLUDED
 
-typedef struct {
-    long scaleX;
-    long rotationY;
-    long rotationX;
-    long scaleY;
-    long coordX;
-    long coordY;
-    long coordMaxX;
-    long coordMaxY;
-    long totalDegreesX;
-    long totalDegreesY;
-}gfw_world_file;
+struct gfw_world_file{
+    double scaleX;
+    double rotationY;
+    double rotationX;
+    double scaleY;
+    double coordX;
+    double coordY;
+    double coordMaxX;
+    double coordMaxY;
+    double totalDegreesX;
+    double totalDegreesY;
+};
 
 #endif // GFW_H_INCLUDED

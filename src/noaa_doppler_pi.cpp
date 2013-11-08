@@ -172,7 +172,6 @@ bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
     if (m_overlayImage && m_showDoppler)
     {
-
         wxPoint *pt = new wxPoint();
         pt->x = 0;
         pt->y = 0;
