@@ -6,6 +6,7 @@
 #define DOPPLER_IMAGE_H
 
 #include "gfw.h"
+#include  "../include/opencpn/ocpn_plugin.h"
 
 class doppler_image
 {
@@ -14,10 +15,14 @@ class doppler_image
         virtual ~doppler_image();
 
         void LoadImage(wxString filePath);
-        wxBitmap *GetStretchedImage();
+        wxBitmap *GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parentWindow);
     protected:
     private:
-        wxBitmap    *m_sourceImage;
+        wxBitmap            *m_sourceImage;
+        wxBitmap            *m_cachedImage;
+        PlugIn_ViewPort     *m_lastViewPort;
+        void                CalculateWorldFile();
+        gfw_world_file      *gfw;
 
 };
 

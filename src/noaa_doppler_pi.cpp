@@ -123,14 +123,6 @@ bool noaa_doppler_pi::DeInit(void)
 void noaa_doppler_pi::OnToolbarToolCallback(int id)
 {
     ShowPropertiesWindow();
-    gfw_world_file gfw;
-
-    gfw.scaleX = 0.0107884909889915;
-    gfw.rotationX=0;
-    gfw.rotationY=0;
-    gfw.scaleY = -0.0107884909889915;
-    gfw.coordX = -125.725156347101;
-    gfw.coordY = 51.1564404713024;
 }
 
 
@@ -145,6 +137,7 @@ void noaa_doppler_pi::ShowPropertiesWindow()
     if (!m_controlPanelWindow)
     {
         m_controlPanelWindow = new noaa_control_panel(*this, m_parent_window);
+        RequestRefresh(m_parent_window);
     }
 
     if(m_controlPanelWindow->ShowModal() == wxID_OK)
@@ -181,9 +174,9 @@ bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
     {
 
         wxPoint *pt = new wxPoint();
-        pt->x = 100;
-        pt->y = 200;
-        dc.DrawBitmap(*m_overlayImage->GetStretchedImage(), *pt, true);
+        pt->x = 0;
+        pt->y = 0;
+        dc.DrawBitmap(*m_overlayImage->GetStretchedImage(vp, m_parent_window), *pt, true);
     }
     return false;
 }
