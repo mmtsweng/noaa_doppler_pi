@@ -27,11 +27,11 @@ void doppler_image::LoadImage(wxString filePath)
 
 wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parentWindow)
 {
-    wxLogMessage(wxT("NOAADOPPLER: LAT:%f, Lon:%f, latmax:%f, lonmax:%f, width:%f, height:%f"), vp->lat_min, vp->lon_min, vp->lat_max, vp->lon_max, parentWindow->GetScreenRect().GetWidth(), parentWindow->GetScreenRect().GetHeight());
-
     //Check for new image
-    if (m_cachedImage || (m_lastViewPort && (m_lastViewPort->clat != vp->clat || m_lastViewPort->clon != vp->clon)))
+    if (!m_cachedImage || (m_lastViewPort && (m_lastViewPort->pix_width != vp->pix_width || m_lastViewPort->pix_height != vp->pix_height)))
     {
+        wxLogMessage(wxT("NOAADOPPLER: LAT:%f, Lon:%f, width:, height:"), vp->pix_width, vp->pix_height);
+
         wxPoint pl;
         GetCanvasPixLL(vp, &pl, vp->clat, vp->clon);
         m_lastViewPort = vp;
@@ -45,41 +45,36 @@ wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parent
 
 wxBitmap doppler_image::GenerateClippedImage(PlugIn_ViewPort *vp)
 {
-        wxImage image = m_sourceImage->ConvertToImage();
-        wxImage croppedImage = image.GetSubImage(CalculateClippingArea(vp));
-        croppedImage.Rescale(800,600, wxIMAGE_QUALITY_NORMAL);
-        return croppedImage;
+    wxImage image = m_sourceImage->ConvertToImage();
+    wxImage croppedImage = image.GetSubImage(CalculateClippingArea(vp));
+    croppedImage.InitAlpha();
+    croppedImage.Rescale(1280,600, wxIMAGE_QUALITY_NORMAL);
+    wxImage blurredImage = croppedImage.Blur(8);
+
+    image = NULL;
+    croppedImage = NULL;
+    return blurredImage;
 }
 
 wxRect doppler_image::CalculateClippingArea(PlugIn_ViewPort *vp)
 {
-        wxRect clipRectangle;
+    wxRect clipRectangle;
 
-        //Find top left corner
-        double degFrom0 = (m_gfw.coordY - vp->lat_max);
-        double ratioOfImg = (degFrom0 / m_gfw.coordMaxY);
-        clipRectangle.SetTop(abs(floor((ratioOfImg * 550) + 0.5)));
-        wxLogMessage(wxT("NOAADOPPLER: ImageRectT: deg0:%f, ratio:%f"), degFrom0, ratioOfImg);
+    //Breakout of calculation
+    /*
+    double degFrom0 = (m_gfw.coordY - vp->lat_max);
+    double ratioOfImg = (degFrom0 / m_gfw.coordMaxY);
+    clipRectangle.SetTop(abs(floor((ratioOfImg * 550) + 0.5)));
+    wxLogMessage(wxT("NOAADOPPLER: ImageRectT: deg0:%f, ratio:%f"), degFrom0, ratioOfImg);
+    wxLogMessage(wxT("NOAADOPPLER: ImageRect: top:%d, left:%d, bottom%d, right%d"), clipRectangle.GetTop(), clipRectangle.GetLeft(), clipRectangle.GetBottom(), clipRectangle.GetRight());
+    */
 
-        degFrom0 = (m_gfw.coordX - vp->lon_min);
-        ratioOfImg = (degFrom0 / m_gfw.coordMaxX);
-        clipRectangle.SetLeft(abs(floor((ratioOfImg * 600) + 0.5)));
-        wxLogMessage(wxT("NOAADOPPLER: ImageRectL: deg0:%f, ratio:%f"), degFrom0, ratioOfImg);
+    clipRectangle.SetTop(abs(floor((((m_gfw.coordY - vp->lat_max) / m_gfw.coordMaxY) * 550) + 0.5)));
+    clipRectangle.SetLeft(abs(floor((((m_gfw.coordX - vp->lon_min) / m_gfw.coordMaxX) * 600) + 0.5)));
+    clipRectangle.SetBottom(abs(floor((((m_gfw.coordY - vp->lat_min) / m_gfw.coordMaxY) * 550) + 0.5)));
+    clipRectangle.SetRight(abs(floor((((m_gfw.coordX - vp->lon_max) / m_gfw.coordMaxX) * 600) + 0.5)));
 
-        //Find bottom right
-        degFrom0 = (m_gfw.coordY - vp->lat_min);
-        ratioOfImg = (degFrom0 / m_gfw.coordMaxY);
-        clipRectangle.SetBottom(abs(floor((ratioOfImg * 550) + 0.5)));
-        wxLogMessage(wxT("NOAADOPPLER: ImageRectB: deg0:%f, ratio:%f"), degFrom0, ratioOfImg);
-
-        degFrom0 = (m_gfw.coordX - vp->lon_max);
-        ratioOfImg = (degFrom0 / m_gfw.coordMaxX);
-        clipRectangle.SetRight(abs(floor((ratioOfImg * 600) + 0.5)));
-        wxLogMessage(wxT("NOAADOPPLER: ImageRectR: deg0:%f, ratio:%f"), degFrom0, ratioOfImg);
-
-        wxLogMessage(wxT("NOAADOPPLER: ImageRect: top:%d, left:%d, bottom%d, right%d"), clipRectangle.GetTop(), clipRectangle.GetLeft(), clipRectangle.GetBottom(), clipRectangle.GetRight());
-
-        return clipRectangle;
+    return clipRectangle;
 }
 
 
