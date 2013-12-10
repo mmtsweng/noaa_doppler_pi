@@ -62,6 +62,7 @@ SET(SRC_NOAADOPPLER
     src/noaa_control_panel.cpp
     src/noaa_control_panel.h
     src/gfw.h
+    src/settings.h
     src/doppler_image.cpp
     src/doppler_image.h
  	)

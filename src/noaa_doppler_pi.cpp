@@ -1,10 +1,12 @@
 
 #ifndef  WX_PRECOMP
+#include "wx/wxprec.h"
 #include <wx/wx.h>
 #endif //precompiled headers
-
+#include "wx/fileconf.h"
 #include <wx/aui/aui.h>
 #include "noaa_doppler_pi.h"
+#include "noaa_control_panel.h"
 #include "icons.h"
 #include "doppler_image.h"
 
@@ -33,7 +35,14 @@ noaa_doppler_pi::noaa_doppler_pi(void *ppimgr)
 {
     initialize_images();
     m_overlayImage = new doppler_image();
-    m_overlayImage->LoadImage(_T("/home/matt/opencpn/radar/ATX_N0R_0.gif"));
+    m_settings = new noaaPi_settings();
+
+    //Default Settings
+    m_settings->blurFactor = 5;
+    m_settings->showOverlay = true;
+    m_settings->sourceImageHeight = 550;
+    m_settings->sourceImageWidth = 600;
+    m_settings->sourceImagePath =  _T("/home/matt/opencpn/radar/ATX_N0R_0.gif");
 }
 
 
@@ -48,7 +57,7 @@ int noaa_doppler_pi::Init(void)
     m_parent_window = GetOCPNCanvasWindow();
 
     // Get a reference to the OCPN Configuration object
-    //m_pconfig = GetOCPNConfigObject();
+    m_pconfig = GetOCPNConfigObject();
 
     // Create the Context Menu Items
 
@@ -68,6 +77,8 @@ int noaa_doppler_pi::Init(void)
     //Set Default Values
     m_controlPanelWindow = NULL;
     m_showDoppler = false;
+    LoadConfig(m_settings);
+    UpdateSettings(m_settings);
 
     // This PlugIn needs a toolbar icon
     m_toolbar_item_id  = InsertPlugInTool(_T(""), _img_noaadoppler_inactive, _img_noaadoppler_inactive, wxITEM_CHECK,
@@ -136,7 +147,7 @@ void noaa_doppler_pi::ShowPropertiesWindow()
     m_showDoppler = true;
     if (!m_controlPanelWindow)
     {
-        m_controlPanelWindow = new noaa_control_panel(*this, m_parent_window);
+        m_controlPanelWindow = new noaa_control_panel(this, m_parent_window);
         RequestRefresh(m_parent_window);
     }
 
@@ -165,6 +176,20 @@ void noaa_doppler_pi::SetDopplerVisibility(bool visibility)
     m_showDoppler = visibility;
 }
 
+
+/*
+    UI has new settings to update
+*/
+void noaa_doppler_pi::UpdateSettings(noaaPi_settings *settings)
+{
+    wxLogMessage(_T("NOAADOPPLER: Updating Settings"));
+    m_overlayImage->UpdateSettings(settings);
+    m_overlayImage->LoadImage(settings->sourceImagePath);
+    m_showDoppler = settings->showOverlay;
+    RequestRefresh(m_parent_window);
+}
+
+
 /*
     Non-OpenGL Rendering
 */
@@ -178,6 +203,63 @@ bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
         dc.DrawBitmap(*m_overlayImage->GetStretchedImage(vp, m_parent_window), *pt, true);
     }
     return false;
+}
+
+
+/*
+    Method to load plugin settings from config file
+*/
+bool noaa_doppler_pi::LoadConfig(noaaPi_settings *settings)
+{
+    return true;
+    wxFileConfig *pConf = m_pconfig;
+
+    if(!pConf)
+    {
+        wxLogMessage(_T("NOAADOPPLER: No configuration"));
+        return false;
+    }
+
+    wxLogMessage(_T("NOAADOPPLER: Loading Settings"));
+
+    pConf->SetPath ( _T( "/Settings/NoaaDoppler" ) );
+    pConf->Read ( _T( "ShowOverlay" ), settings->showOverlay );
+    pConf->Read ( _T( "blurFactor" ), settings->blurFactor);
+    pConf->Read ( _T( "SourceImageHeight" ), settings->sourceImageHeight);
+    pConf->Read ( _T( "SourceImageWidth" ), settings->sourceImageWidth);
+    pConf->Read ( _T( "SourceImagePath" ), settings->sourceImagePath);
+
+    return true;
+}
+
+
+/*
+    Method to save plugin settings to config file
+*/
+bool noaa_doppler_pi::SaveConfig(noaaPi_settings *settings)
+{
+    return true;
+    wxFileConfig *pConf = m_pconfig;
+
+    if(pConf)
+    {
+        pConf->SetPath ( _T ( "/Settings/NoaaDoppler" ) );
+        pConf->Write ( _T( "ShowOverlay" ), settings->showOverlay);
+        pConf->Write ( _T( "blurFactor" ), settings->blurFactor);
+        pConf->Write ( _T( "SourceImageHeight" ), settings->sourceImageHeight);
+        pConf->Write ( _T( "SourceImageWidth" ), settings->sourceImageWidth);
+        pConf->Write ( _T( "SourceImagePath" ), settings->sourceImagePath);
+
+        //Automatically write changes
+        pConf->Flush();
+
+        return true;
+    }
+    else
+    {
+        wxLogMessage(_T("REMEMBRANCER: No configuration"));
+        return false;
+    }
 }
 
 //////////////////////////////////////
@@ -238,7 +320,6 @@ void noaa_doppler_pi::OnContextMenuItemCallback(int id)
 void noaa_doppler_pi::SetCursorLatLon(double lat, double lon)
 {
 }
-
 
 bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
 {

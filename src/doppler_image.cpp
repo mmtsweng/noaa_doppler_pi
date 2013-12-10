@@ -1,4 +1,5 @@
 #include "doppler_image.h"
+#include "settings.h"
 #include <math.h>
 
 doppler_image::doppler_image()
@@ -49,7 +50,7 @@ wxBitmap doppler_image::GenerateClippedImage(PlugIn_ViewPort *vp)
     wxImage croppedImage = image.GetSubImage(CalculateClippingArea(vp));
     croppedImage.InitAlpha();
     croppedImage.Rescale(1280,600, wxIMAGE_QUALITY_NORMAL);
-    wxImage blurredImage = croppedImage.Blur(8);
+    wxImage blurredImage = croppedImage.Blur(m_settings->blurFactor);
 
     image = NULL;
     croppedImage = NULL;
@@ -69,14 +70,13 @@ wxRect doppler_image::CalculateClippingArea(PlugIn_ViewPort *vp)
     wxLogMessage(wxT("NOAADOPPLER: ImageRect: top:%d, left:%d, bottom%d, right%d"), clipRectangle.GetTop(), clipRectangle.GetLeft(), clipRectangle.GetBottom(), clipRectangle.GetRight());
     */
 
-    clipRectangle.SetTop(abs(floor((((m_gfw.coordY - vp->lat_max) / m_gfw.coordMaxY) * 550) + 0.5)));
-    clipRectangle.SetLeft(abs(floor((((m_gfw.coordX - vp->lon_min) / m_gfw.coordMaxX) * 600) + 0.5)));
-    clipRectangle.SetBottom(abs(floor((((m_gfw.coordY - vp->lat_min) / m_gfw.coordMaxY) * 550) + 0.5)));
-    clipRectangle.SetRight(abs(floor((((m_gfw.coordX - vp->lon_max) / m_gfw.coordMaxX) * 600) + 0.5)));
+    clipRectangle.SetTop(abs(floor((((m_gfw.coordY - vp->lat_max) / m_gfw.coordMaxY) * m_settings->sourceImageHeight) + 0.5)));
+    clipRectangle.SetLeft(abs(floor((((m_gfw.coordX - vp->lon_min) / m_gfw.coordMaxX) * m_settings->sourceImageWidth) + 0.5)));
+    clipRectangle.SetBottom(abs(floor((((m_gfw.coordY - vp->lat_min) / m_gfw.coordMaxY) * m_settings->sourceImageHeight) + 0.5)));
+    clipRectangle.SetRight(abs(floor((((m_gfw.coordX - vp->lon_max) / m_gfw.coordMaxX) * m_settings->sourceImageWidth) + 0.5)));
 
     return clipRectangle;
 }
-
 
 void doppler_image::CalculateWorldFile()
 {
@@ -92,8 +92,8 @@ void doppler_image::CalculateWorldFile()
     m_gfw.scaleY = -0.0107884909889915;
     m_gfw.coordX = -125.725156347101;
     m_gfw.coordY = 51.1564404713024;
-    m_gfw.coordMaxX = (600 * (fabs(m_gfw.scaleX)));
-    m_gfw.coordMaxY = (550 * (fabs(m_gfw.scaleY)));
+    m_gfw.coordMaxX = (m_settings->sourceImageWidth * (fabs(m_gfw.scaleX)));
+    m_gfw.coordMaxY = (m_settings->sourceImageHeight * (fabs(m_gfw.scaleY)));
     m_gfw.totalDegreesX = (m_gfw.coordX + m_gfw.coordMaxX);
     m_gfw.totalDegreesY = (m_gfw.coordY + (-m_gfw.coordMaxY));
 
@@ -102,6 +102,11 @@ void doppler_image::CalculateWorldFile()
 
 }
 
+void doppler_image::UpdateSettings(noaaPi_settings *settings)
+{
+    m_settings = settings;
+    LoadImage(settings->sourceImagePath);
+}
 
 
 

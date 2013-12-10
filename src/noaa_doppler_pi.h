@@ -1,5 +1,5 @@
-#ifndef _DEMOPI_H_
-#define _DEMOPI_H_
+#ifndef DOPPLER_PI_H_
+#define DOPPLER_PI_H_
 
 #include "wx/wxprec.h"
 #include "wx/timer.h"
@@ -21,6 +21,7 @@
 #include "noaa_control_panel.h"
 #include "gfw.h"
 #include "doppler_image.h"
+#include "settings.h"
 
 //----------------------------------------------------------------------------------------------------------
 //    The PlugIn Class Definition
@@ -33,12 +34,10 @@ public:
     //    The required PlugIn Methods
     int Init(void);
     bool DeInit(void);
-
     int GetAPIVersionMajor();
     int GetAPIVersionMinor();
     int GetPlugInVersionMajor();
     int GetPlugInVersionMinor();
-
     wxBitmap *GetPlugInBitmap();
     wxString GetCommonName();
     wxString GetShortDescription();
@@ -46,6 +45,10 @@ public:
 
     //    The Plugin Specific Methods
     void SetDopplerVisibility(bool visible);
+    void UpdateSettings(noaaPi_settings *settings);
+    bool LoadConfig(noaaPi_settings *settings);
+    bool SaveConfig(noaaPi_settings *settings);
+
 
     //    The override PlugIn Methods
     void OnToolbarToolCallback(int id);
@@ -72,6 +75,7 @@ private:
     int                 m_hide_id;
     int                 m_toolbar_item_id;
     bool                m_showDoppler;
+    noaaPi_settings     *m_settings;
 };
 #endif
 

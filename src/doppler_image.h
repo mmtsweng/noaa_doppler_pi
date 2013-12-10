@@ -7,6 +7,7 @@
 
 #include "gfw.h"
 #include  "../include/opencpn/ocpn_plugin.h"
+#include "settings.h"
 
 class doppler_image
 {
@@ -15,6 +16,7 @@ class doppler_image
         virtual ~doppler_image();
 
         void LoadImage(wxString filePath);
+        void UpdateSettings(noaaPi_settings *settings);
         wxBitmap *GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parentWindow);
     protected:
     private:
@@ -25,6 +27,7 @@ class doppler_image
         wxBitmap            GenerateClippedImage(PlugIn_ViewPort *vp);
         wxRect              CalculateClippingArea(PlugIn_ViewPort *vp);
         gfw_world_file      m_gfw;
+        noaaPi_settings     *m_settings;
 
 };
 
