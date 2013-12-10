@@ -49,7 +49,7 @@ wxBitmap doppler_image::GenerateClippedImage(PlugIn_ViewPort *vp)
     wxImage image = m_sourceImage->ConvertToImage();
     wxImage croppedImage = image.GetSubImage(CalculateClippingArea(vp));
     croppedImage.InitAlpha();
-    croppedImage.Rescale(1280,600, wxIMAGE_QUALITY_NORMAL);
+    croppedImage.Rescale(vp->pix_width,vp->pix_height, wxIMAGE_QUALITY_NORMAL);
     wxImage blurredImage = croppedImage.Blur(m_settings->blurFactor);
 
     image = NULL;
