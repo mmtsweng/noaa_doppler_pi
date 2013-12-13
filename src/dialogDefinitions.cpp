@@ -42,8 +42,8 @@ PreferencesDialog::PreferencesDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText2->Wrap( -1 );
 	bSizer4->Add( m_staticText2, 0, wxALL, 5 );
 	
-	m_textCtrl1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 220,-1 ), 0 );
-	bSizer4->Add( m_textCtrl1, 0, wxALL, 5 );
+	m_txtImagePath = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 220,-1 ), 0 );
+	bSizer4->Add( m_txtImagePath, 0, wxALL, 5 );
 	
 	m_btnDownload = new wxButton( this, wxID_UPDATE, wxT("Download"), wxDefaultPosition, wxDefaultSize, 0 );
 	bSizer4->Add( m_btnDownload, 0, wxALL, 5 );

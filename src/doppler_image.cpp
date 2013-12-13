@@ -17,10 +17,19 @@ doppler_image::~doppler_image()
 
 void doppler_image::LoadImage(wxString filePath)
 {
-    if (m_sourceImage)
+    //Exit if we don't have a good new file to load
+    if (filePath.length()<1)
+    {
+        return;
+    }
+
+    //Delete existing image
+    if (m_sourceImage != NULL)
     {
         delete m_sourceImage;
     }
+
+    //Load new image
     m_sourceImage = new wxBitmap();
     m_sourceImage->LoadFile(filePath, wxBITMAP_TYPE_GIF);
     CalculateWorldFile();
@@ -29,9 +38,9 @@ void doppler_image::LoadImage(wxString filePath)
 wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parentWindow)
 {
     //Check for new image
-    if (!m_cachedImage || (m_lastViewPort && (m_lastViewPort->pix_width != vp->pix_width || m_lastViewPort->pix_height != vp->pix_height)))
+    if ((m_cachedImage == NULL) || ((m_lastViewPort != NULL) && (m_lastViewPort->pix_width != vp->pix_width || m_lastViewPort->pix_height != vp->pix_height)))
     {
-        wxLogMessage(wxT("NOAADOPPLER: LAT:%f, Lon:%f, width:, height:"), vp->pix_width, vp->pix_height);
+        wxLogMessage(wxT("NOAADOPPLER: VPwidth:%f, LastWidth:%d, VPHeight, LastHeight"), vp->pix_width, vp->pix_height);
 
         wxPoint pl;
         GetCanvasPixLL(vp, &pl, vp->clat, vp->clon);

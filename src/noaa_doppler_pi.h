@@ -71,11 +71,11 @@ private:
     wxAuiManager        *m_AUImgr;
     wxFileConfig        *m_pconfig;
     doppler_image       *m_overlayImage;
+    noaaPi_settings     *m_settings;
     int                 m_show_id;
     int                 m_hide_id;
     int                 m_toolbar_item_id;
     bool                m_showDoppler;
-    noaaPi_settings     *m_settings;
 };
 #endif
 

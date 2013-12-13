@@ -12,15 +12,15 @@ class noaa_control_panel: public PreferencesDialog
     public:
         noaa_control_panel(noaa_doppler_pi *ppi, wxWindow* parent);
         virtual ~noaa_control_panel();
+        void SetSettings (noaaPi_settings *settings);
     protected:
         noaa_doppler_pi     *m_noaa_doppler_pi;
         wxWindow            *pParent;
         void CheckBoxClicked( wxCommandEvent &event );
         void DownloadClickEvent( wxCommandEvent& event );
-        void SetSettings (noaaPi_settings *settings);
 
     private:
-        noaaPi_settings     *m_settings;
+        noaaPi_settings     m_settings;
 
 };
 

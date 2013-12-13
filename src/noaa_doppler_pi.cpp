@@ -36,13 +36,6 @@ noaa_doppler_pi::noaa_doppler_pi(void *ppimgr)
     initialize_images();
     m_overlayImage = new doppler_image();
     m_settings = new noaaPi_settings();
-
-    //Default Settings
-    m_settings->blurFactor = 5;
-    m_settings->showOverlay = true;
-    m_settings->sourceImageHeight = 550;
-    m_settings->sourceImageWidth = 600;
-    m_settings->sourceImagePath =  _T("/home/matt/opencpn/radar/ATX_N0R_0.gif");
 }
 
 
@@ -148,6 +141,7 @@ void noaa_doppler_pi::ShowPropertiesWindow()
     if (!m_controlPanelWindow)
     {
         m_controlPanelWindow = new noaa_control_panel(this, m_parent_window);
+        m_controlPanelWindow->SetSettings(m_settings);
         RequestRefresh(m_parent_window);
     }
 
@@ -211,7 +205,6 @@ bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 */
 bool noaa_doppler_pi::LoadConfig(noaaPi_settings *settings)
 {
-    return true;
     wxFileConfig *pConf = m_pconfig;
 
     if(!pConf)
@@ -223,11 +216,11 @@ bool noaa_doppler_pi::LoadConfig(noaaPi_settings *settings)
     wxLogMessage(_T("NOAADOPPLER: Loading Settings"));
 
     pConf->SetPath ( _T( "/Settings/NoaaDoppler" ) );
-    pConf->Read ( _T( "ShowOverlay" ), settings->showOverlay );
-    pConf->Read ( _T( "blurFactor" ), settings->blurFactor);
-    pConf->Read ( _T( "SourceImageHeight" ), settings->sourceImageHeight);
-    pConf->Read ( _T( "SourceImageWidth" ), settings->sourceImageWidth);
-    pConf->Read ( _T( "SourceImagePath" ), settings->sourceImagePath);
+    pConf->Read ( _T( "ShowOverlay" ), &settings->showOverlay, true);
+    pConf->Read ( _T( "blurFactor" ), &settings->blurFactor, 5);
+    pConf->Read ( _T( "SourceImageHeight" ), &settings->sourceImageHeight, 550);
+    pConf->Read ( _T( "SourceImageWidth" ), &settings->sourceImageWidth, 600);
+    pConf->Read ( _T( "SourceImagePath" ), &settings->sourceImagePath, _T("/home/matt/opencpn/radar/ATX_N0R_1.gif"));
 
     return true;
 }
@@ -238,7 +231,6 @@ bool noaa_doppler_pi::LoadConfig(noaaPi_settings *settings)
 */
 bool noaa_doppler_pi::SaveConfig(noaaPi_settings *settings)
 {
-    return true;
     wxFileConfig *pConf = m_pconfig;
 
     if(pConf)

@@ -39,7 +39,7 @@ class PreferencesDialog : public wxDialog
 		wxStaticText* m_staticText1;
 		wxSlider* m_sldBlur;
 		wxStaticText* m_staticText2;
-		wxTextCtrl* m_textCtrl1;
+		wxTextCtrl* m_txtImagePath;
 		wxButton* m_btnDownload;
 		wxButton* btn_Ok;
 		
