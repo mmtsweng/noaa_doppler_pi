@@ -22,6 +22,7 @@ void noaa_control_panel::SetSettings(noaaPi_settings *settings)
     this->m_sldBlur->SetValue(settings->blurFactor);
     this->m_chkShowDialog->SetValue(settings->showOverlay);
     this->m_txtImagePath->SetValue(settings->sourceImagePath);
+    m_settings = settings;
 }
 
 /*
@@ -38,8 +39,8 @@ void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 */
 void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
 {
-    m_settings.blurFactor = this->m_sldBlur->GetValue();
-    m_settings.showOverlay = this->m_chkShowDialog->IsChecked();
-    m_settings.sourceImagePath = this->m_txtImagePath->GetValue();
-    m_noaa_doppler_pi->UpdateSettings(&m_settings);
+    m_settings->blurFactor = this->m_sldBlur->GetValue();
+    m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
+    m_settings->sourceImagePath = this->m_txtImagePath->GetValue();
+    m_noaa_doppler_pi->UpdateSettings(m_settings);
 }

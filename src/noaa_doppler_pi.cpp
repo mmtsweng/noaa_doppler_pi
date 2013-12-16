@@ -178,8 +178,8 @@ void noaa_doppler_pi::UpdateSettings(noaaPi_settings *settings)
 {
     wxLogMessage(_T("NOAADOPPLER: Updating Settings"));
     m_overlayImage->UpdateSettings(settings);
-    m_overlayImage->LoadImage(settings->sourceImagePath);
     m_showDoppler = settings->showOverlay;
+    SaveConfig(settings);
     RequestRefresh(m_parent_window);
 }
 

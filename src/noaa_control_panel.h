@@ -20,8 +20,7 @@ class noaa_control_panel: public PreferencesDialog
         void DownloadClickEvent( wxCommandEvent& event );
 
     private:
-        noaaPi_settings     m_settings;
-
+        noaaPi_settings     *m_settings;
 };
 
 #endif // NOAA_CONTROL_PANEL_H
