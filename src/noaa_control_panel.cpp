@@ -33,7 +33,6 @@ void noaa_control_panel::BlurAmountChanged(wxScrollEvent &event)
     m_noaa_doppler_pi->UpdateSettings(m_settings);
 }
 
-
 /*
     Visibility Checkbox clicked
 */
@@ -48,8 +47,20 @@ void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 */
 void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
 {
+    wxLogMessage(_T("NOAADOPPLER: Downloading File!"));
+    downloader = new ImageDownloader();
+    if (downloader->DownloadFile(_T("http://radar.weather.gov/ridge/RadarImg/N0R/ATX_N0R_0.gif"), _T("/home/matt/opencpn/radar/ATX_N0R_Test.gif")))
+    {
+        wxLogMessage(_T("NOAADOPPLER: Success"));
+    }
+    else
+    {
+        wxLogMessage(_T("NOAADOPPLER: Failed"));
+    }
+    delete downloader;
+
     m_settings->blurFactor = this->m_sldBlur->GetValue();
     m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
-    m_settings->sourceImagePath = this->m_txtImagePath->GetValue();
+    m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/ATX_N0R_Test.gif"); //this->m_txtImagePath->GetValue();
     m_noaa_doppler_pi->UpdateSettings(m_settings);
 }

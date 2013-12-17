@@ -65,6 +65,8 @@ SET(SRC_NOAADOPPLER
     src/settings.h
     src/doppler_image.cpp
     src/doppler_image.h
+    src/imageDownloader.cpp
+    src/imageDownloader.h
  	)
 
 INCLUDE_DIRECTORIES(opencpn)

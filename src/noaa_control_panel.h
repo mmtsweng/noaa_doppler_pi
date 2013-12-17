@@ -3,6 +3,7 @@
 
 #include "dialogDefinitions.h"
 #include "settings.h"
+#include "imageDownloader.h"
 
 //Forward Declaration to avoid circular dependency
 class noaa_doppler_pi;
@@ -22,6 +23,7 @@ class noaa_control_panel: public PreferencesDialog
 
     private:
         noaaPi_settings     *m_settings;
+        ImageDownloader     *downloader;
 };
 
 #endif // NOAA_CONTROL_PANEL_H
