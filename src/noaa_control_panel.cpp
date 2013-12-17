@@ -26,12 +26,21 @@ void noaa_control_panel::SetSettings(noaaPi_settings *settings)
 }
 
 /*
+*/
+void noaa_control_panel::BlurAmountChanged(wxScrollEvent &event)
+{
+    m_settings->blurFactor = this->m_sldBlur->GetValue();
+    m_noaa_doppler_pi->UpdateSettings(m_settings);
+}
+
+
+/*
     Visibility Checkbox clicked
 */
 void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 {
-    wxLogMessage(_T("NOAADOPPLER: Checkbox Clicked"));
-    //this->m_noaa_doppler_pi.SetDopplerVisibility(event.IsChecked());
+    m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
+    m_noaa_doppler_pi->UpdateSettings(m_settings);
 }
 
 /*

@@ -18,6 +18,7 @@ class noaa_control_panel: public PreferencesDialog
         wxWindow            *pParent;
         void CheckBoxClicked( wxCommandEvent &event );
         void DownloadClickEvent( wxCommandEvent& event );
+        void BlurAmountChanged( wxScrollEvent& event );
 
     private:
         noaaPi_settings     *m_settings;

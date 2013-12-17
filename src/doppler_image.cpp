@@ -40,7 +40,7 @@ wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parent
     //Check for new image
     if ((m_cachedImage) || ((!m_lastViewPort) && (m_lastViewPort->pix_width != vp->pix_width || m_lastViewPort->pix_height != vp->pix_height)))
     {
-        wxLogMessage(wxT("NOAADOPPLER: VPwidth:%f, VPHeight%f, LastWdith:%f LastHeight:%f"), vp->pix_width, vp->pix_height, m_lastViewPort->pix_width, m_lastViewPort->pix_height);
+        wxLogMessage(wxT("NOAADOPPLER: VPwidth:%d, VPHeight%d, LastWdith:%d LastHeight:%d"), vp->pix_width, vp->pix_height, m_lastViewPort->pix_width, m_lastViewPort->pix_height);
 
         wxPoint pl;
         GetCanvasPixLL(vp, &pl, vp->clat, vp->clon);
