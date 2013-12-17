@@ -69,7 +69,6 @@ int noaa_doppler_pi::Init(void)
 
     //Set Default Values
     m_controlPanelWindow = NULL;
-    m_showDoppler = false;
     LoadConfig(m_settings);
     UpdateSettings(m_settings);
 
@@ -136,8 +135,6 @@ void noaa_doppler_pi::OnToolbarToolCallback(int id)
 void noaa_doppler_pi::ShowPropertiesWindow()
 {
     SetToolbarItemState(m_toolbar_item_id, false);
-    SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_active, _img_noaadoppler_active);
-    m_showDoppler = true;
     if (!m_controlPanelWindow)
     {
         m_controlPanelWindow = new noaa_control_panel(this, m_parent_window);
@@ -149,7 +146,6 @@ void noaa_doppler_pi::ShowPropertiesWindow()
     {
     }
     SetToolbarItemState(m_toolbar_item_id, false);
-    SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_inactive, _img_noaadoppler_inactive);
 }
 
 
@@ -163,22 +159,21 @@ void noaa_doppler_pi::ResetToolbarIcon()
 
 
 /*
-    Show/Hide the Doppler Overlay
-*/
-void noaa_doppler_pi::SetDopplerVisibility(bool visibility)
-{
-    m_showDoppler = visibility;
-}
-
-
-/*
     UI has new settings to update
 */
 void noaa_doppler_pi::UpdateSettings(noaaPi_settings *settings)
 {
     wxLogMessage(_T("NOAADOPPLER: Updating Settings"));
     m_overlayImage->UpdateSettings(settings);
-    m_showDoppler = settings->showOverlay;
+    if (m_settings->showOverlay)
+    {
+        SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_active, _img_noaadoppler_active);
+    }
+    else
+    {
+        SetToolbarToolBitmaps(m_toolbar_item_id, _img_noaadoppler_inactive, _img_noaadoppler_inactive);
+    }
+
     SaveConfig(settings);
     RequestRefresh(m_parent_window);
 }
@@ -189,7 +184,7 @@ void noaa_doppler_pi::UpdateSettings(noaaPi_settings *settings)
 */
 bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
-    if (m_overlayImage && m_showDoppler)
+    if (m_overlayImage && m_settings->showOverlay)
     {
         wxPoint *pt = new wxPoint();
         pt->x = 0;
@@ -214,9 +209,10 @@ bool noaa_doppler_pi::LoadConfig(noaaPi_settings *settings)
     }
 
     wxLogMessage(_T("NOAADOPPLER: Loading Settings"));
+    settings->showOverlay = false;
+
 
     pConf->SetPath ( _T( "/Settings/NoaaDoppler" ) );
-    pConf->Read ( _T( "ShowOverlay" ), &settings->showOverlay, true);
     pConf->Read ( _T( "blurFactor" ), &settings->blurFactor, 5);
     pConf->Read ( _T( "SourceImageHeight" ), &settings->sourceImageHeight, 550);
     pConf->Read ( _T( "SourceImageWidth" ), &settings->sourceImageWidth, 600);

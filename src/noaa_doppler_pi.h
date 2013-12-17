@@ -44,7 +44,6 @@ public:
     wxString GetLongDescription();
 
     //    The Plugin Specific Methods
-    void SetDopplerVisibility(bool visible);
     void UpdateSettings(noaaPi_settings *settings);
     bool LoadConfig(noaaPi_settings *settings);
     bool SaveConfig(noaaPi_settings *settings);
@@ -75,7 +74,6 @@ private:
     int                 m_show_id;
     int                 m_hide_id;
     int                 m_toolbar_item_id;
-    bool                m_showDoppler;
 };
 #endif
 

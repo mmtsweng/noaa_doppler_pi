@@ -16,11 +16,12 @@
 #include <wx/font.h>
 #include <wx/colour.h>
 #include <wx/settings.h>
+#include <wx/statline.h>
 #include <wx/stattext.h>
 #include <wx/slider.h>
-#include <wx/sizer.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/sizer.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -36,21 +37,27 @@ class PreferencesDialog : public wxDialog
 	
 	protected:
 		wxCheckBox* m_chkShowDialog;
+		wxStaticLine* m_staticline1;
 		wxStaticText* m_staticText1;
 		wxSlider* m_sldBlur;
+		wxStaticLine* m_staticline3;
+		wxStaticText* m_staticText3;
+		wxTextCtrl* m_txtRadarURL;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_txtImagePath;
 		wxButton* m_btnDownload;
+		wxStaticLine* m_staticline2;
 		wxButton* btn_Ok;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void CheckBoxClicked( wxCommandEvent& event ) { event.Skip(); }
+		virtual void BlurAmountChanged( wxScrollEvent& event ) { event.Skip(); }
 		virtual void DownloadClickEvent( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
 		
-		PreferencesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 250,400 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		PreferencesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 250,370 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~PreferencesDialog();
 	
 };
