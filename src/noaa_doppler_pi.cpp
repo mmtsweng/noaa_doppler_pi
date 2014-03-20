@@ -207,6 +207,10 @@ bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp
         glGenTextures(1, m_glTextures);
         wxBitmap textureBMP = *m_overlayImage->GetStretchedImage(vp, m_parent_window);
         wxImage textureImage = textureBMP.ConvertToImage();
+        if(textureImage.HasAlpha())
+        {
+            wxLogMessage(_T(" NOAADOPPLER: HAS ALPHA CHANNEL!!!"));
+        }
 
         if (textureImage.IsOk())
         {
