@@ -1,4 +1,14 @@
 
+//NOAA DOPPLER PLUG IN
+//  - Matt Brown
+//
+//
+//  OPEN CPN Plugin to download and render NOAA created RIDGE enhanced doppler imagery as an overlay over
+//      the chart.
+//  For more information about the data:
+//      http://radar.weather.gov/ridge/GIS.html - explanation of GIS imagery
+//      http://www.srh.noaa.gov/jetstream/doppler/ridge_download.htm - description of how to find relevent imagery
+
 #ifndef  WX_PRECOMP
 #include "wx/wxprec.h"
 #include <wx/wx.h>
@@ -178,6 +188,57 @@ void noaa_doppler_pi::UpdateSettings(noaaPi_settings *settings)
     RequestRefresh(m_parent_window);
 }
 
+/*
+    OpenGL Rendering
+*/
+bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
+{
+    if (m_overlayImage && m_settings->showOverlay)
+    {
+        wxLogMessage(_T("NOAADOPPLER: GL Overlay"));
+
+
+        //Create OpenGL Texture
+        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        GLuint* m_glTextures = new GLuint[1];
+        glGenTextures(1, m_glTextures);
+        wxBitmap textureBMP = *m_overlayImage->GetStretchedImage(vp, m_parent_window);
+        wxImage textureImage = textureBMP.ConvertToImage();
+
+        if (textureImage.IsOk())
+        {
+            int width = textureImage.GetWidth();
+            int height = textureImage.GetHeight();
+            unsigned char *Data = new unsigned char[width * height * 4];
+            unsigned char *pColor = textureImage.GetData();
+            unsigned char *pAlpha = textureImage.GetAlpha();
+            unsigned char *pData = Data;
+
+            //Copy Color and Alpha into RGBA temporary storage
+            for (int i=0; i<width*height; i++)
+            {
+                for (int j=0; j<3; j++)
+                {
+                    *pData++ = *pColor++;
+                }
+                *pData++ = *pAlpha++;
+            }
+
+            //Render Texture
+            glBindTexture(GL_TEXTURE_2D, m_glTextures[0]);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data);
+
+            //Delete temporary storage
+            delete [] Data;
+        }
+    }
+    return false;
+}
 
 /*
     Non-OpenGL Rendering
@@ -245,7 +306,7 @@ bool noaa_doppler_pi::SaveConfig(noaaPi_settings *settings)
     }
     else
     {
-        wxLogMessage(_T("REMEMBRANCER: No configuration"));
+        wxLogMessage(_T("NOAADOPPLER: No configuration"));
         return false;
     }
 }
@@ -254,6 +315,29 @@ bool noaa_doppler_pi::SaveConfig(noaaPi_settings *settings)
 //          Items Below are         //
 //        Common to all plugins     //
 //////////////////////////////////////
+
+
+
+void noaa_doppler_pi::UpdateAuiStatus(void)
+{
+      //    This method is called after the PlugIn is initialized
+      //    and the frame has done its initial layout, possibly from a saved wxAuiManager "Perspective"
+      //    It is a chance for the PlugIn to syncronize itself internally with the state of any Panes that
+      //    were added to the frame in the PlugIn ctor.
+
+      //    We use this callback here to keep the context menu selection in sync with the window state
+
+    printf("NOAADOPPLER: UpdateAuiStatus");
+    wxAuiPaneInfo &pane = m_AUImgr->GetPane(m_controlPanelWindow);
+    if(!pane.IsOk())
+        return;
+
+    printf("update %d\n",pane.IsShown());
+
+    SetCanvasContextMenuItemViz(m_hide_id, pane.IsShown());
+    SetCanvasContextMenuItemViz(m_show_id, !pane.IsShown());
+
+}
 
 
 /*
@@ -309,16 +393,6 @@ void noaa_doppler_pi::SetCursorLatLon(double lat, double lon)
 {
 }
 
-bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp)
-{
-    if (m_overlayImage)
-    {
-        wxLogMessage(_T("NOAADOPPLER: GL Overlay"));
-        //wxBitmap m_ptemp_img = new wxBitmap(m_overlayImage->GetWidth(), m_overlayImage->GetHeight());
-        //dc.DrawBitmap(*m_overlayImage, 0, 0, false);
-    }
-    return false;
-}
 
 int noaa_doppler_pi::GetToolbarToolCount(void)
 {

@@ -57,7 +57,7 @@ public:
     bool RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp);
     int GetToolbarToolCount(void);
     void SetPositionFixEx(PlugIn_Position_Fix_Ex &pfix);
-
+    void UpdateAuiStatus(void);
 
 private:
     //Private Methods

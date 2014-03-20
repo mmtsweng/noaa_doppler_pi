@@ -64,3 +64,10 @@ void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
     m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/ATX_N0R_Test.gif"); //this->m_txtImagePath->GetValue();
     m_noaa_doppler_pi->UpdateSettings(m_settings);
 }
+
+
+void noaa_control_panel::SiteIDChanged( wxCommandEvent& event )
+{}
+
+void noaa_control_panel::ImageTypeChanged( wxCommandEvent& event )
+{}
