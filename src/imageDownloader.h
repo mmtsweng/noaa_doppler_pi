@@ -18,6 +18,9 @@ class ImageDownloader
         virtual ~ImageDownloader();
 
         bool DownloadFile(wxString url, wxString destination);
+        wxString GenerateSavedFilename();
+        wxString GenerateDownloadFilename();
+        wxString GenerateWorldFilename();
     protected:
     private:
         wxURL           *fileDL;

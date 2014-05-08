@@ -23,6 +23,7 @@
 #include <wx/choice.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/gauge.h>
 #include <wx/dialog.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -44,13 +45,11 @@ class PreferencesDialog : public wxDialog
 		wxStaticText* m_staticText4;
 		wxChoice* m_cboRadar;
 		wxStaticText* m_staticText5;
-		wxChoice* m_choice2;
-		wxStaticText* m_staticText6;
-		wxTextCtrl* m_txtRadarURL;
+		wxChoice* m_cboType;
 		wxStaticText* m_staticText2;
 		wxTextCtrl* m_txtImagePath;
 		wxButton* m_btnDownload;
-		wxStaticLine* m_staticline3;
+		wxGauge* m_dlGauge;
 		wxButton* btn_Ok;
 		
 		// Virtual event handlers, overide them in your derived class
@@ -63,7 +62,7 @@ class PreferencesDialog : public wxDialog
 	
 	public:
 		
-		PreferencesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 530,300 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		PreferencesDialog( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 545,250 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~PreferencesDialog();
 	
 };

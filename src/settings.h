@@ -8,6 +8,8 @@ struct noaaPi_settings{
     int sourceImageHeight;
     int sourceImageWidth;
     wxString sourceImagePath;
+    wxString savedFile;
+    wxString sourceWorldFilePath;
 };
 
 #endif // SETTINGS_H_INCLUDED

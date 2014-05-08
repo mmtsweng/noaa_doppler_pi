@@ -1,5 +1,6 @@
 #include "noaa_doppler_pi.h"
 #include "noaa_control_panel.h"
+#include "dialogDefinitions.h"
 #include <wx/wx.h>
 
 noaa_control_panel::noaa_control_panel( noaa_doppler_pi * ppi, wxWindow* parent)
@@ -47,24 +48,39 @@ void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 */
 void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
 {
+    this->m_dlGauge->SetValue(10);
     wxLogMessage(_T("NOAADOPPLER: Downloading File!"));
-    downloader = new ImageDownloader();
-    if (downloader->DownloadFile(_T("http://radar.weather.gov/ridge/RadarImg/N0R/ATX_N0R_0.gif"), _T("/home/matt/opencpn/radar/ATX_N0R_Test.gif")))
+
+    wxString station = _T("ATX");
+    wxString radarType = _T("N0R")
+
+    if (DownloadImage())
     {
-        wxLogMessage(_T("NOAADOPPLER: Success"));
+        m_noaa_doppler_pi->UpdateSettings(m_settings);
     }
     else
     {
         wxLogMessage(_T("NOAADOPPLER: Failed"));
     }
     delete downloader;
-
-    m_settings->blurFactor = this->m_sldBlur->GetValue();
-    m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
-    m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/ATX_N0R_Test.gif"); //this->m_txtImagePath->GetValue();
-    m_noaa_doppler_pi->UpdateSettings(m_settings);
 }
 
+private DownloadImage(wxString savedFile)
+{
+    downloader = new ImageDownloader();
+    wxString savedFile = downloader->GenerateSavedFilename();
+
+    if (downloader->DownloadFile(downloader->GenerateDownloadFilename(), savedFile ))
+    {
+
+        wxLogMessage(_T("NOAADOPPLER: Successfully downloaded image file"));
+        m_settings->blurFactor = this->m_sldBlur->GetValue();
+        m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
+        m_settings->savedFile = savedFile;
+        m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/");
+        this->m_dlGauge->SetValue(80);
+    }
+}
 
 void noaa_control_panel::SiteIDChanged( wxCommandEvent& event )
 {}

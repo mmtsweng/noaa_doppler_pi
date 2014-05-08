@@ -188,6 +188,7 @@ void noaa_doppler_pi::UpdateSettings(noaaPi_settings *settings)
     RequestRefresh(m_parent_window);
 }
 
+
 /*
     OpenGL Rendering
 */
@@ -196,53 +197,105 @@ bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp
     if (m_overlayImage && m_settings->showOverlay)
     {
         wxLogMessage(_T("NOAADOPPLER: GL Overlay"));
-
-
-        //Create OpenGL Texture
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        GLuint* m_glTextures = new GLuint[1];
-        glGenTextures(1, m_glTextures);
-        wxBitmap textureBMP = *m_overlayImage->GetStretchedImage(vp, m_parent_window);
-        wxImage textureImage = textureBMP.ConvertToImage();
-        if(textureImage.HasAlpha())
+        try
         {
-            wxLogMessage(_T(" NOAADOPPLER: HAS ALPHA CHANNEL!!!"));
-        }
 
-        if (textureImage.IsOk())
-        {
-            int width = textureImage.GetWidth();
-            int height = textureImage.GetHeight();
-            unsigned char *Data = new unsigned char[width * height * 4];
-            unsigned char *pColor = textureImage.GetData();
-            unsigned char *pAlpha = textureImage.GetAlpha();
-            unsigned char *pData = Data;
+            //Create OpenGL Texture
+            glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+            glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            GLuint* m_glTextures = new GLuint[1];
+            glGenTextures(1, m_glTextures);
+            wxBitmap textureBMP = *m_overlayImage->GetStretchedImage(vp, m_parent_window);
+            wxImage textureImage = textureBMP.ConvertToImage();
 
-            //Copy Color and Alpha into RGBA temporary storage
-            for (int i=0; i<width*height; i++)
+            if (textureImage.IsOk())
             {
-                for (int j=0; j<3; j++)
+
+                int width = textureImage.GetWidth();
+                int height = textureImage.GetHeight();
+                GLubyte *Data = new GLubyte[width * height * 4];
+                GLubyte *pColor = textureImage.GetData();
+                GLubyte *pAlpha = textureImage.GetAlpha();
+                GLubyte *pData = Data;
+
+                //Copy Color and Alpha into RGBA temporary storage
+                for (int i=0; i<width*height; i++)
                 {
-                    *pData++ = *pColor++;
+                    GLubyte rgb = 0;
+                    for (int j=0; j<3; j++)
+                    {
+                        *pData++ = *pColor++;
+                        rgb += *pData;
+                    }
+                    *pData++ = 255-rgb;
                 }
-                *pData++ = *pAlpha++;
+
+                 //Render Texture
+                 glBindTexture(GL_TEXTURE_2D, m_glTextures[0]);
+                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                 glTexImage2D(GL_TEXTURE_RECTANGLE, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data);
+
+                 //Delete temporary storage
+                 delete [] Data;
+            /*
+
+
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                int width = textureImage.GetWidth();
+                int height = textureImage.GetHeight();
+                int bytesPerPixel = textureImage.HasAlpha() ? 4 : 3;
+                int rgbBytes = 3;
+                int imageSize = height * width * bytesPerPixel;
+
+                GLubyte *bitmapData = textureImage.GetData();
+                GLubyte *alphaData = textureImage.GetAlpha();
+                GLubyte *renderedImage = new GLubyte[imageSize];
+
+                int offset = height-1;
+
+                for (int y=0; y<height; y++)
+                {
+                    for (int x=0; x<width; x++)
+                    {
+                    *
+                        int alphaPixel = ((x+y)*width);
+                        int rgbaPixel = (alphaPixel)*bytesPerPixel;
+                        renderedImage[rgbaPixel] = bitmapData[(alphaPixel*rgbBytes)];
+                        renderedImage[rgbaPixel+1] = bitmapData[(alphaPixel*rgbBytes)+1];
+                        renderedImage[rgbaPixel+2] = bitmapData[(alphaPixel*rgbBytes)+2];
+                        renderedImage[rgbaPixel+3] = alphaData[(alphaPixel)];
+                    *
+
+                        renderedImage[(x+y*width)*bytesPerPixel] = bitmapData[(x+(offset-1)*width)*3];
+                        renderedImage[(x+y*width)*bytesPerPixel+1] = bitmapData[(x+(offset-1)*width)*3+1];
+                        renderedImage[(x+y*width)*bytesPerPixel+2] = bitmapData[(x+(offset-1)*width)*3+2];
+                        renderedImage[(x+y*width)*bytesPerPixel+3] = alphaData[(x+(offset-1)*width)];
+
+                    }
+                }
+
+                wxLogMessage(_T("NOAADOPPLER: render"));
+                glTexImage2D(GL_TEXTURE_RECTANGLE, 0, bytesPerPixel, width, height, 0,
+                    textureImage.HasAlpha() ? GL_RGBA : GL_RGB,
+                    GL_UNSIGNED_BYTE, renderedImage);
+
+                //Delete temporary storage
+                delete [] renderedImage; */
             }
-
-            //Render Texture
-            glBindTexture(GL_TEXTURE_2D, m_glTextures[0]);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, Data);
-
-            //Delete temporary storage
-            delete [] Data;
-        }
-    }
+       }
+       catch(...)
+       {
+            wxLogMessage(_T("NOAADOPPLER: Error rendering OpenGL Overlay"));
+       }
+   }
+   wxLogMessage(_T("NOAADOPPLER: return"));
     return false;
 }
+
 
 /*
     Non-OpenGL Rendering
@@ -281,7 +334,7 @@ bool noaa_doppler_pi::LoadConfig(noaaPi_settings *settings)
     pConf->Read ( _T( "blurFactor" ), &settings->blurFactor, 5);
     pConf->Read ( _T( "SourceImageHeight" ), &settings->sourceImageHeight, 550);
     pConf->Read ( _T( "SourceImageWidth" ), &settings->sourceImageWidth, 600);
-    pConf->Read ( _T( "SourceImagePath" ), &settings->sourceImagePath, _T("/home/matt/opencpn/radar/ATX_N0R_1.gif"));
+    pConf->Read ( _T( "SourceImagePath" ), &settings->sourceImagePath, _T("/home/matt/opencpn/radar/"));
 
     return true;
 }

@@ -29,10 +29,17 @@ void doppler_image::LoadImage(wxString filePath)
         delete m_sourceImage;
     }
 
-    //Load new image
-    m_sourceImage = new wxBitmap();
-    m_sourceImage->LoadFile(filePath, wxBITMAP_TYPE_GIF);
-    CalculateWorldFile();
+    try
+    {
+        //Load new image
+        m_sourceImage = new wxBitmap();
+        m_sourceImage->LoadFile(filePath, wxBITMAP_TYPE_GIF);
+        CalculateWorldFile();
+    }
+    catch (...)
+    {
+        wxMessageBox(_T("Could not load image"), _T("No Image"), wxOK, NULL);
+    }
 }
 
 wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parentWindow)
