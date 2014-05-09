@@ -117,6 +117,7 @@ PreferencesDialog::PreferencesDialog( wxWindow* parent, wxWindowID id, const wxS
 	this->Centre( wxBOTH );
 	
 	// Connect Events
+	this->Connect( wxEVT_ACTIVATE, wxActivateEventHandler( PreferencesDialog::OnActivate ) );
 	m_sldBlur->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( PreferencesDialog::BlurAmountChanged ), NULL, this );
 	m_sldBlur->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( PreferencesDialog::BlurAmountChanged ), NULL, this );
 	m_sldBlur->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( PreferencesDialog::BlurAmountChanged ), NULL, this );
@@ -135,6 +136,7 @@ PreferencesDialog::PreferencesDialog( wxWindow* parent, wxWindowID id, const wxS
 PreferencesDialog::~PreferencesDialog()
 {
 	// Disconnect Events
+	this->Disconnect( wxEVT_ACTIVATE, wxActivateEventHandler( PreferencesDialog::OnActivate ) );
 	m_sldBlur->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( PreferencesDialog::BlurAmountChanged ), NULL, this );
 	m_sldBlur->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( PreferencesDialog::BlurAmountChanged ), NULL, this );
 	m_sldBlur->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( PreferencesDialog::BlurAmountChanged ), NULL, this );

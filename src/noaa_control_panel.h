@@ -22,6 +22,7 @@ class noaa_control_panel: public PreferencesDialog
         void BlurAmountChanged( wxScrollEvent& event );
         void SiteIDChanged( wxCommandEvent& event );
 		void ImageTypeChanged( wxCommandEvent& event );
+		void OnActivate( wxActivateEvent& event );
 
     private:
         noaaPi_settings     *m_settings;

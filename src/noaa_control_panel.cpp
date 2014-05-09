@@ -23,10 +23,12 @@ void noaa_control_panel::SetSettings(noaaPi_settings *settings)
     this->m_sldBlur->SetValue(settings->blurFactor);
     this->m_chkShowDialog->SetValue(settings->showOverlay);
     this->m_txtImagePath->SetValue(settings->sourceImagePath);
+    this->m_dlGauge->Hide();
     m_settings = settings;
 }
 
 /*
+    Amount of blur applied to imagery changed
 */
 void noaa_control_panel::BlurAmountChanged(wxScrollEvent &event)
 {
@@ -48,14 +50,16 @@ void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 */
 void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
 {
+    this->m_dlGauge->Show();
     this->m_dlGauge->SetValue(10);
     wxLogMessage(_T("NOAADOPPLER: Downloading File!"));
 
     wxString station = _T("ATX");
-    wxString radarType = _T("N0R")
+    wxString radarType = _T("N0R");
 
-    if (DownloadImage())
+    if (DownloadImage(station, radarType))
     {
+        this->m_dlGauge->SetValue(80);
         m_noaa_doppler_pi->UpdateSettings(m_settings);
     }
     else
@@ -63,9 +67,10 @@ void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
         wxLogMessage(_T("NOAADOPPLER: Failed"));
     }
     delete downloader;
+    this->m_dlGauge->SetValue(100);
 }
 
-private DownloadImage(wxString savedFile)
+bool noaa_control_panel::DownloadImage(wxString station, wxString radarType)
 {
     downloader = new ImageDownloader();
     wxString savedFile = downloader->GenerateSavedFilename();
@@ -79,7 +84,20 @@ private DownloadImage(wxString savedFile)
         m_settings->savedFile = savedFile;
         m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/");
         this->m_dlGauge->SetValue(80);
+        return true;
     }
+    else
+    {
+        return false;
+    }
+}
+
+/*
+    Window Activated
+*/
+void noaa_control_panel::OnActivate(wxActivateEvent& e)
+{
+    this->m_dlGauge->Hide();
 }
 
 void noaa_control_panel::SiteIDChanged( wxCommandEvent& event )

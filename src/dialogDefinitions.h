@@ -53,6 +53,7 @@ class PreferencesDialog : public wxDialog
 		wxButton* btn_Ok;
 		
 		// Virtual event handlers, overide them in your derived class
+		virtual void OnActivate( wxActivateEvent& event ) { event.Skip(); }
 		virtual void BlurAmountChanged( wxScrollEvent& event ) { event.Skip(); }
 		virtual void CheckBoxClicked( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SiteIDChanged( wxCommandEvent& event ) { event.Skip(); }

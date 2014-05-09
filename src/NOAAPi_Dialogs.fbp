@@ -42,7 +42,7 @@
             <property name="minimum_size"></property>
             <property name="name">PreferencesDialog</property>
             <property name="pos"></property>
-            <property name="size">545,230</property>
+            <property name="size">545,250</property>
             <property name="style">wxDEFAULT_DIALOG_STYLE</property>
             <property name="subclass"></property>
             <property name="title"></property>
@@ -50,7 +50,7 @@
             <property name="window_extra_style"></property>
             <property name="window_name"></property>
             <property name="window_style"></property>
-            <event name="OnActivate"></event>
+            <event name="OnActivate">OnActivate</event>
             <event name="OnActivateApp"></event>
             <event name="OnAuiFindManager"></event>
             <event name="OnAuiPaneButton"></event>
