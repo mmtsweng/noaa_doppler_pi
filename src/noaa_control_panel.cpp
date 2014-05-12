@@ -8,6 +8,17 @@ noaa_control_panel::noaa_control_panel( noaa_doppler_pi * ppi, wxWindow* parent)
 {
     m_noaa_doppler_pi = ppi;
     pParent = parent;
+
+    this->typeList = new wxArrayString();
+    typeList->Add(_T("N0R"));
+    typeList->Add(_T("N0S"));
+    typeList->Add(_T("N0V"));
+    typeList->Add(_T("N1P"));
+    typeList->Add(_T("NCR"));
+
+    this->stationList = new wxArrayString();
+    stationList->Add(_T("ATX"));
+    stationList->Add(_T("OTX"));
 }
 
 noaa_control_panel::~noaa_control_panel()
@@ -54,10 +65,8 @@ void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
 {
     this->m_dlGauge->Show();
     this->m_dlGauge->SetValue(10);
-    wxLogMessage(_T("NOAADOPPLER: Downloading File!"));
-
-    wxString station = _T("ATX");
-    wxString radarType = _T("N0R");
+    wxString station = this->stationList->Item(this->m_cboRadar->GetSelection());
+    wxString radarType = this->typeList->Item(this->m_cboType->GetSelection());
 
     if (DownloadImage(station, radarType))
     {
@@ -81,9 +90,9 @@ bool noaa_control_panel::DownloadImage(wxString station, wxString radarType)
     try
     {
         downloader = new ImageDownloader();
-        wxString savedFile = downloader->GenerateSavedFilename();
+        wxString savedFile = downloader->GenerateSavedFilename(station, radarType);
 
-        if (downloader->DownloadFile(downloader->GenerateDownloadFilename(), savedFile ))
+        if (downloader->DownloadFile(downloader->GenerateDownloadFilename(station, radarType), savedFile ))
         {
             wxLogMessage(_T("NOAADOPPLER: Successfully downloaded image file"));
             m_settings->blurFactor = this->m_sldBlur->GetValue();

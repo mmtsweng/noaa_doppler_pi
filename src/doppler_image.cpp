@@ -1,6 +1,7 @@
 #include "doppler_image.h"
 #include "settings.h"
 #include <math.h>
+#include <wx/file.h>
 
 doppler_image::doppler_image()
 {
@@ -21,6 +22,11 @@ void doppler_image::LoadImage(wxString filePath)
     //Exit if we don't have a good new file to load
     if (filePath.length()<1)
     {
+        return;
+    }
+    if (!wxFile::Exists(filePath))
+    {
+        wxMessageBox(_T("Image Not Found in local directory. Try Dowloading again."), _T("No Image"), wxOK, NULL);
         return;
     }
 
@@ -137,6 +143,5 @@ void doppler_image::UpdateSettings(noaaPi_settings *settings)
     m_settings = settings;
     LoadImage(settings->savedFile);
 }
-
 
 

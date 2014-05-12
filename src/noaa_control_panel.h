@@ -27,8 +27,9 @@ class noaa_control_panel: public PreferencesDialog
     private:
         noaaPi_settings     *m_settings;
         ImageDownloader     *downloader;
+        wxArrayString       *stationList;
+        wxArrayString       *typeList;
         bool DownloadImage(wxString station, wxString radarType);
-
 };
 
 #endif // NOAA_CONTROL_PANEL_H

@@ -56,7 +56,7 @@ PreferencesDialog::PreferencesDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText4->Wrap( -1 );
 	bSizer5->Add( m_staticText4, 0, wxALL, 5 );
 	
-	wxString m_cboRadarChoices[] = { wxT("atx|Everett/Seattle-Tacoma, WA"), wxT("otx|Spokane, WA") };
+	wxString m_cboRadarChoices[] = { wxT("Everett/Seattle-Tacoma, WA"), wxT("Spokane, WA") };
 	int m_cboRadarNChoices = sizeof( m_cboRadarChoices ) / sizeof( wxString );
 	m_cboRadar = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_cboRadarNChoices, m_cboRadarChoices, 0 );
 	m_cboRadar->SetSelection( 0 );
@@ -66,7 +66,7 @@ PreferencesDialog::PreferencesDialog( wxWindow* parent, wxWindowID id, const wxS
 	m_staticText5->Wrap( -1 );
 	bSizer5->Add( m_staticText5, 0, wxALL, 5 );
 	
-	wxString m_cboTypeChoices[] = { wxT("N0R|Base Reflectivity"), wxT("N0S|Storm Relative Motion"), wxT("N0V|Base Velocity"), wxT("N1P|One Hour Precipitation"), wxT("NCR|Composite Reflectivity") };
+	wxString m_cboTypeChoices[] = { wxT("Base Reflectivity"), wxT("Storm Relative Motion"), wxT("Base Velocity"), wxT("One Hour Precipitation"), wxT("Composite Reflectivity") };
 	int m_cboTypeNChoices = sizeof( m_cboTypeChoices ) / sizeof( wxString );
 	m_cboType = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_cboTypeNChoices, m_cboTypeChoices, 0 );
 	m_cboType->SetSelection( 0 );
