@@ -8,6 +8,7 @@ doppler_image::doppler_image()
     wxImageHandler *gifLoader = new wxGIFHandler();
     wxImage::AddHandler(gifLoader);
     m_sourceImage = NULL;
+    m_cachedImage = NULL;
 }
 
 doppler_image::~doppler_image()
@@ -32,6 +33,7 @@ void doppler_image::LoadImage(wxString filePath)
     try
     {
         //Load new image
+        //wxLogMessage(wxT("NOAADOPPLER: Loading image:%s" ), *filePath);
         m_sourceImage = new wxBitmap();
         m_sourceImage->LoadFile(filePath, wxBITMAP_TYPE_GIF);
         CalculateWorldFile();
@@ -51,15 +53,14 @@ wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parent
     {
         try
         {
-            if (m_lastViewPort)
-            {
-                wxLogMessage(wxT("NOAADOPPLER: VPwidth:%d, VPHeight%d, LastWidth:%d LastHeight:%d"), vp->pix_width, vp->pix_height, m_lastViewPort->pix_width, m_lastViewPort->pix_height);
-            }
+            m_lastViewPort = vp;
+            m_cachedImage = new wxBitmap(GenerateClippedImage(vp));
         }
-        catch (...) {}
+        catch (...)
+        {
+            wxLogMessage(_T("Error getting stretched image"));
+        }
 
-        m_lastViewPort = vp;
-        m_cachedImage = new wxBitmap(GenerateClippedImage(vp));
     }
 
     return m_cachedImage;
@@ -68,15 +69,22 @@ wxBitmap *doppler_image::GetStretchedImage(PlugIn_ViewPort *vp, wxWindow *parent
 
 wxBitmap doppler_image::GenerateClippedImage(PlugIn_ViewPort *vp)
 {
-    wxImage image = m_sourceImage->ConvertToImage();
-    wxImage croppedImage = image.GetSubImage(CalculateClippingArea(vp));
-    croppedImage.InitAlpha();
-    croppedImage.Rescale(vp->pix_width,vp->pix_height, wxIMAGE_QUALITY_NORMAL);
-    wxImage blurredImage = croppedImage.Blur(m_settings->blurFactor);
+    try
+    {
+        wxImage image = m_sourceImage->ConvertToImage();
+        wxImage croppedImage = image.GetSubImage(CalculateClippingArea(vp));
+        croppedImage.InitAlpha();
+        croppedImage.Rescale(vp->pix_width,vp->pix_height, wxIMAGE_QUALITY_NORMAL);
+        wxImage blurredImage = croppedImage.Blur(m_settings->blurFactor);
 
-    image = NULL;
-    croppedImage = NULL;
-    return blurredImage;
+        image = NULL;
+        croppedImage = NULL;
+        return blurredImage;
+    }
+    catch(...)
+    {
+        return NULL;
+    }
 }
 
 wxRect doppler_image::CalculateClippingArea(PlugIn_ViewPort *vp)
@@ -127,7 +135,7 @@ void doppler_image::CalculateWorldFile()
 void doppler_image::UpdateSettings(noaaPi_settings *settings)
 {
     m_settings = settings;
-    LoadImage(settings->sourceImagePath);
+    LoadImage(settings->savedFile);
 }
 
 

@@ -41,8 +41,10 @@ void noaa_control_panel::BlurAmountChanged(wxScrollEvent &event)
 */
 void noaa_control_panel::CheckBoxClicked(wxCommandEvent &event)
 {
+    downloader = new ImageDownloader();
     m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
     m_noaa_doppler_pi->UpdateSettings(m_settings);
+    downloader = NULL;
 }
 
 /*
@@ -61,32 +63,42 @@ void noaa_control_panel::DownloadClickEvent(wxCommandEvent &event)
     {
         this->m_dlGauge->SetValue(80);
         m_noaa_doppler_pi->UpdateSettings(m_settings);
+        this->m_dlGauge->SetValue(100);
     }
     else
     {
+        this->m_dlGauge->SetValue(0);
         wxLogMessage(_T("NOAADOPPLER: Failed"));
     }
     delete downloader;
-    this->m_dlGauge->SetValue(100);
 }
 
+/*
+    Method to download the current radar image, and save it to the local file path
+*/
 bool noaa_control_panel::DownloadImage(wxString station, wxString radarType)
 {
-    downloader = new ImageDownloader();
-    wxString savedFile = downloader->GenerateSavedFilename();
-
-    if (downloader->DownloadFile(downloader->GenerateDownloadFilename(), savedFile ))
+    try
     {
+        downloader = new ImageDownloader();
+        wxString savedFile = downloader->GenerateSavedFilename();
 
-        wxLogMessage(_T("NOAADOPPLER: Successfully downloaded image file"));
-        m_settings->blurFactor = this->m_sldBlur->GetValue();
-        m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
-        m_settings->savedFile = savedFile;
-        m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/");
-        this->m_dlGauge->SetValue(80);
-        return true;
+        if (downloader->DownloadFile(downloader->GenerateDownloadFilename(), savedFile ))
+        {
+            wxLogMessage(_T("NOAADOPPLER: Successfully downloaded image file"));
+            m_settings->blurFactor = this->m_sldBlur->GetValue();
+            m_settings->showOverlay = this->m_chkShowDialog->IsChecked();
+            m_settings->savedFile = savedFile;
+            m_settings->sourceImagePath = _T("/home/matt/opencpn/radar/");
+            this->m_dlGauge->SetValue(80);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    else
+    catch (...)
     {
         return false;
     }

@@ -217,7 +217,7 @@ bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp
                 int height = textureImage.GetHeight();
                 GLubyte *Data = new GLubyte[width * height * 4];
                 GLubyte *pColor = textureImage.GetData();
-                GLubyte *pAlpha = textureImage.GetAlpha();
+                //GLubyte *pAlpha = textureImage.GetAlpha();
                 GLubyte *pData = Data;
 
                 //Copy Color and Alpha into RGBA temporary storage
@@ -302,7 +302,7 @@ bool noaa_doppler_pi::RenderGLOverlay(wxGLContext *pcontext, PlugIn_ViewPort *vp
 */
 bool noaa_doppler_pi::RenderOverlay(wxDC &dc, PlugIn_ViewPort *vp)
 {
-    if (m_overlayImage && m_settings->showOverlay)
+    if (m_overlayImage!=NULL && m_settings->showOverlay && m_settings->savedFile.length()>0)
     {
         wxPoint *pt = new wxPoint();
         pt->x = 0;

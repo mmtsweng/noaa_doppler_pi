@@ -46,7 +46,9 @@ wxString ImageDownloader::GenerateSavedFilename()
     return _T("/home/matt/opencpn/radar/ATX_N0R_Test.gif");
 }
 
-
+/*
+    Method to generate the world file filename
+*/
 wxString ImageDownloader::GenerateWorldFilename()
 {
     return _T("http://radar.weather.gov/ridge/RadarImg/N0R/ATX_N0R_0.gfw");
